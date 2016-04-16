@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>react</title>  
+    <link rel="stylesheet" type="text/css" href="css/index.css"/>  
+</head>
+<body>
+    <div id="box"></div>
+
+    <script src="js/react.js"></script>
+    <script src="js/react-dom.js"></script>
+    <script src="js/browser.min.js"></script>
+    <script type="text/babel">
+      var Input = React.createClass({
+        
+        getInitialState: function() {
+          return {
+            id: 0,
+            lists: []
+          };
+        },
+
+        handleAdd: function(event) {
+          if ( event.target.checked ) {
+              var value = this.refs.ipt.value;
+              value = value.replace(/^\s+|\s+$/g, '');
+              if ( !!value ) {
+                var id = this.state.id,
+                    lists = this.state.lists;
+                lists.push({
+                  id: id++,
+                  content: value
+                })
+                this.setState({id: id, lists: lists})
+              } else {
+                alert('内容不能为空！');
+              }  
+              this.refs.ipt.value = '';
+              event.target.checked = false;
+          } 
+        },
+
+        handleDel: function(event){
+          if ( event.target.className == 'delBtn' ) {
+            var lists = this.state.lists,
+                index = event.target.getAttribute('data-id');
+            lists.splice(index, 1);
+            this.setState({lists: lists});        
+          }
+        },
+
+        render: function () {
+          var lists = this.state.lists;
+          return (
+            <div>
+              <input className="text" type="text" ref="ipt"/>
+              <input type="checkbox" onChange={this.handleAdd}/>
+              <ul onClick={this.handleDel}>
+                {
+                  lists.map(function (item, index, lists) {
+                    return <li key={item.id}><p className="content">{item.content}</p><span className="delBtn" data-id={index}></span></li>
+                  })
+                }
+              </ul>
+            </div>
+          );
+        }
+
+    });
+
+    ReactDOM.render(
+      <Input/>, 
+      document.getElementById('box')
+    );
+
+    </script>
+</body>
+</html>
